@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📜 Historique des soins</h2>
+
+    <form method="get" class="row g-3 mb-3">
+        <div class="col-md-3">
+            {{ form.patient.label_tag }} {{ form.patient }}
+        </div>
+        <div class="col-md-2">
+            {{ form.type_soin.label_tag }} {{ form.type_soin }}
+        </div>
+        <div class="col-md-2">
+            {{ form.action.label_tag }} {{ form.action }}
+        </div>
+        <div class="col-md-2">
+            {{ form.utilisateur.label_tag }} {{ form.utilisateur }}
+        </div>
+        <div class="col-md-2">
+            {{ form.date_debut.label_tag }} {{ form.date_debut }}
+        </div>
+        <div class="col-md-2">
+            {{ form.date_fin.label_tag }} {{ form.date_fin }}
+        </div>
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary btn-sm">🔎 Filtrer</button>
+            <a href="{% url 'soins:historique_soins' %}" class="btn btn-secondary btn-sm">↺ Réinitialiser</a>
+        </div>
+    </form>
+
+    <div class="mb-3" style="text-align: right;">
+        <a href="{% url 'soins:export_soins_pdf' %}" class="btn btn-danger btn-sm" target="_blank">
+            📄 Exporter en PDF
+        </a>
+        <a href="{% url 'soins:export_soins_excel' %}" class="btn btn-success btn-sm" target="_blank">
+            📊 Exporter en Excel
+        </a>
+    </div>
+
+    {% if soins %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Patient</th>
+                <th>Type de soin</th>
+                <th>Action</th>
+                <th>Utilisateur</th>
+                <th>Date</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in soins %}
+            <tr>
+                <td>{{ item.soin.patient.nom_complet }}</td>
+                <td>{{ item.soin.get_type_soin_display }}</td>
+                <td>{{ item.get_action_display }}</td>
+                <td>{{ item.utilisateur.username }}</td>
+                <td>{{ item.date_action|date:"d/m/Y H:i" }}</td>
+                <td>{{ item.details }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">Aucun historique trouvé.</div>
+    {% endif %}
+</div>
+{% endblock %}

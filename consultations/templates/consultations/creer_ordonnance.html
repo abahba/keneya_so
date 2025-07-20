@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Nouvelle ordonnance pour {{ consultation.patient.nom }} {{ consultation.patient.prenom }}</h2>
+# On cherche si le patient est assuré
+try:
+    patient_assure = PatientAssure.objects.get(patient=consultation.patient)
+    assurance = patient_assure.assurance
+
+    # Créer automatiquement la prise en charge (facultatif)
+    prise = PriseEnCharge.objects.create(
+        patient=consultation.patient,
+        assurance=assurance,
+        montant_demande=calcule_montant_ordonnance(ordonnance),  # à définir
+        statut='en attente'
+    )
+    ordonnance.assurance = assurance
+    ordonnance.prise_en_charge = prise
+    ordonnance.save()
+
+except PatientAssure.DoesNotExist:
+    # Le patient n’est pas assuré, on laisse vide
+    pass
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+      <label for="type_assurance"><strong>Type d'assurance :</strong></label>
+      {{ form.type_assurance }}
+    </div>
+
+    <h4>Médicaments</h4>
+    {{ formset.management_form }}
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Médicament</th>
+          <th>Quantité</th>
+          <th>Posologie</th>
+          <th>Durée</th>
+          <th>Supprimer</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for form in formset %}
+        <tr>
+          <td>{{ form.medicament }}</td>
+          <td>{{ form.quantite }}</td>
+          <td>{{ form.posologie }}</td>
+          <td>{{ form.duree }}</td>
+          <td>
+            {% if form.instance.pk %}
+              {{ form.DELETE }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Enregistrer</button>
+    <a href="javascript:history.back()" class="btn btn-secondary">Annuler</a>
+  </form>
+{% endblock %}

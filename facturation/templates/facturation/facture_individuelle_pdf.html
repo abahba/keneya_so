@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture N°{{ facture.id }}</title>
+    <style>
+        body {
+            font-family: "DejaVu Sans", sans-serif;
+            font-size: 12px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 15px;
+        }
+        .label {
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 6px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Facture N°{{ facture.id }}</h2>
+
+    <div class="section">
+        <p><span class="label">Patient :</span> {{ facture.patient.nom_complet }}</p>
+        <p><span class="label">Date :</span> {{ facture.date_emission|date:"d/m/Y H:i" }}</p>
+        <p><span class="label">Émis par :</span> {{ facture.utilisateur.get_full_name }}</p>
+    </div>
+
+    <div class="section">
+        <table>
+            <tr>
+                <th>Description</th>
+                <th>Montant (FCFA)</th>
+            </tr>
+            <tr>
+                <td>Montant Total</td>
+                <td>{{ facture.montant_total }}</td>
+            </tr>
+            <tr>
+                <td>Pris en charge par l'assurance</td>
+                <td>{{ facture.montant_assurance }}</td>
+            </tr>
+            <tr>
+                <td>À la charge du patient</td>
+                <td>{{ facture.montant_patient }}</td>
+            </tr>
+            <tr>
+                <td><strong>Statut de la facture</strong></td>
+                <td><strong>{{ facture.statut|title }}</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h4>Paiements enregistrés</h4>
+        {% if facture.paiements.exists %}
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Montant</th>
+                <th>Moyen de paiement</th>
+            </tr>
+            {% for p in facture.paiements.all %}
+            <tr>
+                <td>{{ p.date_paiement|date:"d/m/Y H:i" }}</td>
+                <td>{{ p.montant_verse }}</td>
+                <td>{{ p.get_mode_paiement_display }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>Aucun paiement enregistré.</p>
+        {% endif %}
+    </div>
+
+    <p style="text-align:center; margin-top: 40px;">Merci pour votre confiance.</p>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Ajouter un patient</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- Champ Statut -->
+    <p>
+      {{ form.statut.label_tag }}<br>
+      {{ form.statut }}
+    </p>
+
+    <!-- Champs pour les patients sortis -->
+    <div id="champ_sortie" style="display: none;">
+      <p>
+        {{ form.date_sortie.label_tag }}<br>
+        {{ form.date_sortie }}
+      </p>
+      <p>
+        {{ form.signature_sortie.label_tag }}<br>
+        {{ form.signature_sortie }}
+      </p>
+    </div>
+
+    <!-- Champs pour les patients décédés -->
+    <div id="champ_deces" style="display: none;">
+      <p>
+        {{ form.date_deces.label_tag }}<br>
+        {{ form.date_deces }}
+      </p>
+      <p>
+        {{ form.signature_deces.label_tag }}<br>
+        {{ form.signature_deces }}
+      </p>
+    </div>
+
+    <!-- Autres champs -->
+    <p>
+      {{ form.nom.label_tag }}<br>
+      {{ form.nom }}
+    </p>
+
+    <p>
+      {{ form.prenom.label_tag }}<br>
+      {{ form.prenom }}
+    </p>
+
+    <p>
+      {{ form.date_naissance.label_tag }}<br>
+      {{ form.date_naissance }}
+    </p>
+
+    <p>
+      {{ form.sexe.label_tag }}<br>
+      {{ form.sexe }}
+    </p>
+
+    <p>
+      {{ form.adresse.label_tag }}<br>
+      {{ form.adresse }}
+    </p>
+
+    <p>
+      {{ form.telephone.label_tag }}<br>
+      {{ form.telephone }}
+    </p>
+
+    <button type="submit">Enregistrer</button>
+  </form>
+  <!-- Script JS -->
+  <script>
+    function toggleFields() {
+        var statut = document.getElementById("id_statut").value;
+        var champ_sortie = document.getElementById("champ_sortie");
+        var champ_deces = document.getElementById("champ_deces");
+
+        champ_sortie.style.display = "none";
+        champ_deces.style.display = "none";
+
+        if (statut === "sorti") {
+            champ_sortie.style.display = "block";
+        } else if (statut === "décédé") {
+            champ_deces.style.display = "block";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", toggleFields);
+    document.getElementById("id_statut").addEventListener("change", toggleFields);
+  </script>
+
+{% endblock %}

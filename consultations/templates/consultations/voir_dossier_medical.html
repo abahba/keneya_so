@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if dossier %}
+    <h2>Dossier médical de {{ dossier.patient.nom }} {{ dossier.patient.prenom }}</h2>
+
+    <p><strong>Antécédents :</strong> {{ dossier.antecedents|default:"N/A" }}</p>
+    <p><strong>Allergies :</strong> {{ dossier.allergies|default:"N/A" }}</p>
+    <p><strong>Traitements en cours :</strong> {{ dossier.traitements_en_cours|default:"N/A" }}</p>
+    <p><strong>Autres informations :</strong> {{ dossier.autres_infos|default:"N/A" }}</p>
+    <p><strong>Date de création :</strong> {{ dossier.date_creation|date:"d/m/Y H:i" }}</p>
+    <p><strong>Créé par :</strong> {{ dossier.auteur }}</p>
+
+    <a href="{% url 'modifier_dossier_medical' dossier.patient.id %}" class="btn btn-primary">Modifier</a>
+    <a href="javascript:history.back()" class="btn btn-secondary">Retour</a>
+  {% else %}
+    <p>Dossier médical introuvable pour ce patient.</p>
+  {% endif %}
+{% endblock %}

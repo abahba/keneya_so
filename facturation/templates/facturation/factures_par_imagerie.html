@@ -1,0 +1,18 @@
+<h3>🖼️ Factures liées aux examens d’imagerie</h3>
+
+<table border="1">
+    <tr>
+        <th>Patient</th>
+        <th>Montant</th>
+        <th>Statut</th>
+        <th>Date</th>
+    </tr>
+    {% for f in factures %}
+    <tr>
+        <td>{{ f.patient.nom_complet }}</td>
+        <td>{{ f.montant_total }} FCFA</td>
+        <td>{{ f.statut }}</td>
+        <td>{{ f.date_emission|date:"d/m/Y" }}</td>
+    </tr>
+    {% endfor %}
+</table>

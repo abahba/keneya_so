@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Liste des Opérations Chirurgicales</h2>
+    <a href="{% url 'bloc_operatoire:ajouter_operation' %}" class="btn btn-primary mb-3">
+        <i class="fas fa-plus"></i> Ajouter une opération
+    </a>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Type</th>
+                    <th>Date/Heure</th>
+                    <th>Chirurgien</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for operation in operations %}
+                <tr>
+                    <td>{{ operation.patient.nom_complet }}</td>
+                    <td>{{ operation.type_operation }}</td>
+                    <td>{{ operation.date_operation|date:"d/m/Y H:i" }}</td>
+                    <td>{{ operation.chirurgien.nom_complet }}</td>
+                    <td>
+                        <div class="mb-3">
+                        <a href="{% url 'bloc_operatoire:historique_operation' operation.id %}" class="btn btn-sm btn-secondary">Historique</a>
+                        <a href="{% url 'export_operations_pdf' %}" class="btn btn-danger">📄 Exporter en PDF</a>
+                        <a href="{% url 'export_operations_excel' %}" class="btn btn-success">📊 Exporter en Excel</a>
+                        <li><a href="{% url 'factures_operations' %}">🔪 Factures des opérations</a></li>
+                        </div>
+                        <a href="{% url 'bloc_operatoire:modifier_operation' operation.id %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'bloc_operatoire:supprimer_operation' operation.id %}" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucune opération enregistrée</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

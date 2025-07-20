@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>📄 Factures liées aux soins</h3>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Date</th>
+            <th>Détail</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for f in factures %}
+        <tr>
+            <td>{{ f.patient.nom_complet }}</td>
+            <td>{{ f.montant_total }} FCFA</td>
+            <td>{{ f.statut }}</td>
+            <td>{{ f.date_emission|date:"d/m/Y" }}</td>
+            <td><a href="{% url 'detail_facture' f.id %}">🔍 Voir</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Aucune facture trouvée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

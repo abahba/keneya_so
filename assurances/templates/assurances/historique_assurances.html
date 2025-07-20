@@ -1,0 +1,22 @@
+<h2>Historique des actions - Assurances</h2>
+
+<table border="1">
+    <tr>
+        <th>Date</th>
+        <th>Utilisateur</th>
+        <th>Action</th>
+        <th>Objet</th>
+        <th>Description</th>
+    </tr>
+    {% for h in historiques %}
+    <tr>
+        <td>{{ h.date|date:"d/m/Y H:i" }}</td>
+        <td>{{ h.utilisateur }}</td>
+        <td>{{ h.action }}</td>
+        <td>{{ h.objet }}</td>
+        <td>{{ h.description }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Aucune action enregistrée.</td></tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Liste des examens d'imagerie</h2>
+<a href="{% url 'ajouter_examen_imagerie' %}" class="btn btn-primary mb-2">Ajouter un examen</a>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Patient</th>
+      <th>Type</th>
+      <th>Date</th>
+      <th>Prescripteur</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for examen in examens %}
+    <tr>
+      <td>{{ examen.patient }}</td>
+      <td>{{ examen.type_imagerie }}</td>
+      <td>{{ examen.date_prescription|date:"d/m/Y H:i" }}</td>
+      <td>{{ examen.prescripteur }}</td>
+      <td>
+        <a href="{% url 'modifier_examen_imagerie' examen.id %}">Modifier</a> |
+        <a href="{% url 'supprimer_examen_imagerie' examen.id %}">Supprimer</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Aucun examen trouvé.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Liste des consultations</h2>
+
+<!-- Barre de recherche -->
+<form method="get" class="form-inline mb-3">
+    <input type="text" name="recherche" placeholder="Rechercher par nom de patient" value="{{ recherche }}" class="form-control mr-2">
+    <button type="submit" class="btn btn-primary">Rechercher</button>
+    <a href="{% url 'liste_consultations' %}" class="btn btn-secondary ml-2">Réinitialiser</a>
+</form>
+
+<a href="{% url 'ajouter_consultation' %}" class="btn btn-success mb-3">Ajouter une consultation</a>
+
+<li><a href="{% url 'factures_ordonnances' %}">📑 Factures des ordonnances</a></li>
+<li><a href="{% url 'factures_hospitalisations' %}">🏥 Factures des hospitalisations</a></li>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Symptômes</th>
+            <th>Diagnostic</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for consultation in consultations %}
+        <tr>
+            <td>{{ consultation.patient.nom }} {{ consultation.patient.prenom }}</td>
+            <td>{{ consultation.date_consultation|date:"d/m/Y H:i" }}</td>
+            <td>{{ consultation.symptomes|truncatechars:50 }}</td>
+            <td>{{ consultation.diagnostic|truncatechars:50 }}</td>
+            <td>
+                <a href="{% url 'modifier_consultation' consultation.id %}" class="btn btn-warning btn-sm">Modifier</a>
+                <a href="{% url 'supprimer_consultation' consultation.id %}" class="btn btn-danger btn-sm">Supprimer</a>
+                <a href="{% url 'historique_consultation' consultation.id %}" class="btn btn-info btn-sm">Historique</a>
+                <a href="{% url 'voir_dossier_medical' consultation.patient.id %}" class="btn btn-secondary btn-sm">📁 Dossier</a>
+                <a href="{% url 'creer_ordonnance' consultation.id %}" class="btn btn-primary btn-sm">Ordonnance</a>
+                <a href="{% url 'prescrire_analyse' consultation.id %}" class="btn btn-sm btn-success">➕ Prescrire une analyse</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Aucune consultation enregistrée.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+
+

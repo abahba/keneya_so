@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>🧾 Prescrire une analyse pour {{ consultation.patient.nom_complet }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Prescrire</button>
+</form>
+
+<a href="{% url 'detail_consultation' consultation.id %}">🔙 Retour à la consultation</a>
+{% endblock %}

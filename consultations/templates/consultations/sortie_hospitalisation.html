@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Confirmation de sortie</h2>
+
+<p>Voulez-vous vraiment marquer comme sorti ce patient ?</p>
+
+<p><strong>{{ hospitalisation.patient.nom }} {{ hospitalisation.patient.prenom }}</strong><br>
+Service : {{ hospitalisation.service.nom }}<br>
+Date d'entrée : {{ hospitalisation.date_entree|date:"d/m/Y H:i" }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmer sortie</button>
+    <a href="{% url 'liste_hospitalisations' %}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

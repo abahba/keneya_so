@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Modifier le dossier médical</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Mettre à jour</button>
+    <a href="{% url 'voir_dossier_medical' dossier.patient.id %}" class="btn btn-secondary">Annuler</a>
+  </form>
+{% endblock %}

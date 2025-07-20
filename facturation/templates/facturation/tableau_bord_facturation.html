@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>📊 Tableau de bord de facturation – {{ annee }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h2 { text-align: center; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #999; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        form { margin-bottom: 20px; text-align: center; }
+        .export-buttons { margin: 15px 0; text-align: center; }
+    </style>
+</head>
+<body>
+    <h2>📊 Tableau de bord de facturation – {{ annee }}</h2>
+
+    <form method="get">
+        <label for="annee">Filtrer par année :</label>
+        <input type="number" name="annee" value="{{ annee }}" min="2020" max="2100" required>
+        <button type="submit">Filtrer</button>
+    </form>
+
+    <div class="export-buttons">
+        <a href="{% url 'export_tableau_bord_pdf' %}?annee={{ annee }}">🖨️ Export PDF</a> |
+        <a href="{% url 'export_tableau_bord_excel' %}?annee={{ annee }}">📥 Export Excel</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Mois</th>
+                <th>Total factures</th>
+                <th>Total paiements</th>
+                <th>Remboursements</th>
+                <th>Net encaissé</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mois, stats in tableau.items %}
+            <tr>
+                <td>{{ mois|date:"F Y" }}</td>
+                <td>{{ stats.total_factures|floatformat:0 }} FCFA</td>
+                <td>{{ stats.total_paiements|floatformat:0 }} FCFA</td>
+                <td>{{ stats.total_remboursements|floatformat:0 }} FCFA</td>
+                <td><strong>{{ stats.net_encaisse|floatformat:0 }} FCFA</strong></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <canvas id="chart" height="100"></canvas>
+
+    <script>
+        const ctx = document.getElementById('chart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{% for mois, _ in tableau.items %}"{{ mois|date:"M" }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+                datasets: [
+                    {
+                        label: 'Total factures',
+                        data: [{% for _, s in tableau.items %}{{ s.total_factures|floatformat:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                    },
+                    {
+                        label: 'Paiements',
+                        data: [{% for _, s in tableau.items %}{{ s.total_paiements|floatformat:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                    },
+                    {
+                        label: 'Remboursements',
+                        data: [{% for _, s in tableau.items %}{{ s.total_remboursements|floatformat:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Montants (FCFA)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<canvas id="chartRevenus" height="100"></canvas>
+
+<script>
+    const ctx = document.getElementById('chartRevenus').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ mois | safe }},
+            datasets: [
+                {
+                    label: 'Facturé',
+                    data: {{ factures_mensuelles | safe }},
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                },
+                {
+                    label: 'Payé',
+                    data: {{ paiements_mensuels | safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Revenus mensuels (facturés vs payés)'
+                }
+            }
+        }
+    });
+</script>
+
+
+

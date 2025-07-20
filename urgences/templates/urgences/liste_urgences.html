@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📋 Liste des urgences</h2>
+
+    <div class="mb-3">
+        <a href="{% url 'urgences:ajouter_urgence' %}" class="btn btn-primary">➕ Ajouter une urgence</a>
+        <a href="{% url 'urgences:export_urgences_pdf' %}" class="btn btn-danger btn-sm">⬇ Exporter PDF</a>
+        <a href="{% url 'urgences:export_urgences_excel' %}" class="btn btn-success btn-sm">⬇ Exporter Excel</a>
+    </div>
+
+    <h5>🔍 Filtrer les urgences</h5>
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-md-3">
+            {{ form.type_urgence.label_tag }}
+            {{ form.type_urgence }}
+        </div>
+        <div class="col-md-3">
+            {{ form.utilisateur.label_tag }}
+            {{ form.utilisateur }}
+        </div>
+        <div class="col-md-3">
+            {{ form.date_debut.label_tag }}
+            {{ form.date_debut }}
+        </div>
+        <div class="col-md-3">
+            {{ form.date_fin.label_tag }}
+            {{ form.date_fin }}
+        </div>
+        <div class="col-12 mt-2">
+            <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+            <a href="{% url 'urgences:liste_urgences' %}" class="btn btn-secondary btn-sm">Réinitialiser</a>
+        </div>
+    </form>
+
+    {% if urgences %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Patient</th>
+                <th>Motif</th>
+                <th>Gravité</th>
+                <th>Date</th>
+                <th>Médecin</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for urgence in urgences %}
+            <tr>
+                <td>{{ urgence.patient.nom_complet|default:"-" }}</td>
+                <td>{{ urgence.motif|default:"-" }}</td>
+                <td>{{ urgence.get_gravite_display|default:"-" }}</td>
+                <td>{{ urgence.date_passage|date:"d/m/Y H:i" }}</td>
+                <td>{{ urgence.medecin_responsable.nom_complet|default:"-" }}</td>
+                <td>
+                    <a href="{% url 'urgences:modifier_urgence' urgence.id %}" class="btn btn-sm btn-warning">✏️</a>
+                    <a href="{% url 'urgences:supprimer_urgence' urgence.id %}" class="btn btn-sm btn-danger">🗑</a>
+                    <a href="{% url 'urgences:historique_urgence' urgence.id %}" class="btn btn-sm btn-info">📜 Historique</a>
+                    <li><a href="{% url 'factures_urgences' %}">🚑 Factures des urgences</a></li>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">Aucune urgence enregistrée.</div>
+    {% endif %}
+</div>
+{% endblock %}
+

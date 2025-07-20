@@ -1,0 +1,54 @@
+<h2>🧾 Détail de la facture #{{ facture.id }}</h2>
+
+<p>
+<strong>Patient :</strong> {{ facture.patient.nom_complet }}<br>
+<strong>Date :</strong> {{ facture.date_emission|date:"d/m/Y H:i" }}<br>
+<strong>Montant total :</strong> {{ facture.montant_total }} FCFA<br>
+<strong>Pris en charge par assurance :</strong> {{ facture.montant_assurance }} FCFA<br>
+<strong>À payer par patient :</strong> {{ facture.montant_patient }} FCFA<br>
+<strong>Statut :</strong>
+<span style="color:
+    {% if facture.statut == 'payée' %}green
+    {% elif facture.statut == 'partiellement payée' %}orange
+    {% else %}red
+    {% endif %}
+">
+    {{ facture.statut|title }}
+    {{ facture.statut|title|default:"Inconnu" }}
+</span>
+</p>
+
+<h3>💳 Paiements effectués :</h3>
+<ul>
+    {% for p in paiements %}
+        <li>{{ p.montant_verse }} FCFA - {{ p.get_mode_paiement_display }} - le {{ p.date_paiement|date:"d/m/Y H:i" }}</li>
+    {% empty %}
+        <li>Aucun paiement</li>
+    {% endfor %}
+</ul>
+
+<p>
+    <a href="{% url 'ajouter_paiement' %}?facture_id={{ facture.id }}">➕ Enregistrer un paiement</a> |
+    <a href="{% url 'ajouter_remboursement' %}?paiement_id={{ p.id }}">💸 Rembourser</a>
+    <a href="{% url 'export_facture_pdf' facture.id %}">🖨️ Télécharger PDF</a> |
+    <a href="{% url 'liste_factures' %}">⬅️ Retour</a>
+</p>
+
+<h4>💰 Remboursements</h4>
+{% for paiement in facture.paiements.all %}
+    {% if paiement.remboursements.all %}
+        <div style="margin-bottom: 10px; padding: 10px; border: 1px dashed #ccc;">
+            <p><strong>Paiement de {{ paiement.montant_verse }} FCFA :</strong></p>
+            <ul>
+                {% for r in paiement.remboursements.all %}
+                    <li>
+                        {{ r.date_remboursement|date:"d/m/Y H:i" }} —
+                        {{ r.montant }} FCFA —
+                        <em>{{ r.motif }}</em>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endfor %}
+

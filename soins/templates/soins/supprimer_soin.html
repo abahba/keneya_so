@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-danger">🗑 Supprimer ce soin ?</h2>
+    <p>Êtes-vous sûr de vouloir supprimer ce soin effectué pour le patient <strong>{{ soin.patient.nom_complet }}</strong> ?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">✅ Oui, supprimer</button>
+        <a href="{% url 'soins:liste_soins' %}" class="btn btn-secondary">❌ Annuler</a>
+    </form>
+</div>
+{% endblock %}

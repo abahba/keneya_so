@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Historique de la consultation</h2>
+
+<p><strong>Patient :</strong> {{ consultation.patient.nom }} {{ consultation.patient.prenom }}</p>
+<p><strong>Date :</strong> {{ consultation.date_consultation|date:"d/m/Y H:i" }}</p>
+<p><strong>Médecin :</strong> {{ consultation.medecin.get_full_name }}</p>
+
+<hr>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Utilisateur</th>
+            <th>Action</th>
+            <th>Détails</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for h in historiques %}
+        <tr>
+            <td>{{ h.date_action|date:"d/m/Y H:i" }}</td>
+            <td>{{ h.utilisateur.get_full_name }}</td>
+            <td>{{ h.action }}</td>
+            <td>{{ h.details }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Aucune action enregistrée.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'export_historique_consultation_pdf' consultation.id %}" class="btn btn-outline-primary">📄 Exporter en PDF</a>
+<a href="{% url 'export_historique_consultation_excel' consultation.id %}" class="btn btn-outline-success">📊 Exporter en Excel</a>
+<a href="{% url 'liste_consultations' %}" class="btn btn-secondary">⬅ Retour</a>
+{% endblock %}
+

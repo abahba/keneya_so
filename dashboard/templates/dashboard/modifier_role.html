@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Modifier le rôle de {{ user.username }}</h3>
+    <form method="post">
+        {% csrf_token %}
+        <select name="role" class="form-control">
+            {% for value, label in user.ROLE_CHOICES %}
+                <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Historique de l'hospitalisation</h2>
+
+<p><strong>Patient :</strong> {{ hospitalisation.patient.nom }} {{ hospitalisation.patient.prenom }}</p>
+<p><strong>Service :</strong> {{ hospitalisation.service.nom }}</p>
+
+<table class="table table-striped">
+    <thead>
+        <a href="{% url 'export_historique_hospitalisation_pdf' hospitalisation.id %}" class="btn btn-secondary mb-3"> Exporter en PDF
+        </a>
+        <tr>
+            <th>Date</th>
+            <th>Utilisateur</th>
+            <th>Action</th>
+            <th>Détails</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for h in historiques %}
+        <tr>
+            <td>{{ h.date_action|date:"d/m/Y H:i" }}</td>
+            <td>{{ h.utilisateur.get_full_name }}</td>
+            <td>{{ h.action }}</td>
+            <td>{{ h.details }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Aucun historique.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'liste_hospitalisations' %}" class="btn btn-secondary">Retour</a>
+{% endblock %}

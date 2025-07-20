@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">🧪 Liste des analyses biologiques</h2>
+
+<!-- 🔍 Formulaire de recherche -->
+<form method="get" class="mb-3">
+  <input type="text" name="search" class="form-control" placeholder="Rechercher par patient, type ou date" value="{{ search }}">
+  <button type="submit" class="btn btn-primary mt-2">🔍 Rechercher</button>
+</form>
+
+<!-- ➕ Ajouter & Export -->
+<div class="mb-3">
+  <a href="{% url 'ajouter_analyse' %}" class="btn btn-success">➕ Nouvelle analyse</a>
+  <a href="{% url 'export_analyses_pdf' %}" class="btn btn-danger">🖨️ Export PDF</a>
+  <a href="{% url 'export_analyses_excel' %}" class="btn btn-info">📊 Export Excel</a>
+  <li><a href="{% url 'factures_analyses' %}">🧪 Factures des analyses</a></li>
+</div>
+
+<!-- 📋 Tableau -->
+<table class="table table-striped table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th>Patient</th>
+      <th>Type d'analyse</th>
+      <th>Date</th>
+      <th>Résultat</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for analyse in analyses %}
+      <tr>
+        <td>{{ analyse.patient.nom_complet }}</td>
+        <td>{{ analyse.type_analyse.nom }}</td>
+        <td>{{ analyse.date_prescription|date:"d/m/Y H:i" }}</td>
+        <td>{{ analyse.date_demande|date:"d/m/Y H:i" }}</td>
+        <td>
+          {% if analyse.resultats.all %}
+            ✅ Disponible
+          {% else %}
+            ⏳ En attente
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'detail_analyse' analyse.id %}" class="btn btn-sm btn-primary">📄 Détail</a>
+          
+          {% if not analyse.resultat %}
+            <a href="{% url 'ajouter_resultat' analyse.id %}" class="btn btn-sm btn-warning">📝 Ajouter résultat</a>
+          {% endif %}
+          
+          <a href="{% url 'historique_analyse' analyse.id %}" class="btn btn-sm btn-secondary">🕘 Historique</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-center">Aucune analyse enregistrée.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

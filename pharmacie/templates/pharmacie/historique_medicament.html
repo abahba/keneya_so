@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Historique du médicament : {{ medicament.nom }}</h2>
+
+  <a href="{% url 'liste_medicaments' %}" class="btn btn-secondary mb-3">Retour à la liste</a>
+
+  <table class="table table-bordered">
+  <a href="{% url 'export_historique_medicament_pdf' medicament.id %}" class="btn btn-danger mb-3">Exporter en PDF</a>
+  <a href="{% url 'export_historique_medicament_excel' medicament.id %}" class="btn btn-success mb-3">Exporter en Excel</a>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Utilisateur</th>
+        <th>Action</th>
+        <th>Détails</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for h in historiques %}
+      <tr>
+        <td>{{ h.date_action|date:"d/m/Y H:i" }}</td>
+        <td>{{ h.utilisateur }}</td>
+        <td>{{ h.action }}</td>
+        <td>{{ h.details }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">Aucune action enregistrée pour ce médicament.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

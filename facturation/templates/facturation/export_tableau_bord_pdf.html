@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de bord {{ annee }}</title>
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #444; padding: 6px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h2>📊 Tableau de bord des factures – Année {{ annee }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Mois</th>
+                <th>Total facturé</th>
+                <th>Pris en charge</th>
+                <th>Payé par patient</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mois, data in donnees_finales %}
+            <tr>
+                <td>{{ mois }}</td>
+                <td>{{ data.total }} FCFA</td>
+                <td>{{ data.assurance }} FCFA</td>
+                <td>{{ data.patient }} FCFA</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

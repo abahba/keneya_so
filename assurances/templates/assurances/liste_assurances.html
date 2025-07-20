@@ -1,0 +1,8 @@
+<h2>Liste des assurances</h2>
+<a href="{% url 'ajouter_assurance' %}">Ajouter une assurance</a>
+<a href="{% url 'historique_assurances' %}">📜 Voir l'historique</a>
+<ul>
+  {% for a in assurances %}
+    <li>{{ a.nom }} - {{ a.type }} - {{ a.couverture }}%</li>
+  {% endfor %}
+</ul>

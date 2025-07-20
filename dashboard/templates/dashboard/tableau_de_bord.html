@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Tableau de Bord{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Tableau de Bord</h1>
+        <span class="badge bg-primary">Mise à jour: {{ today }}</span>
+    </div>
+
+    <!-- Statistiques principales -->
+    <div class="row mb-4">
+        {% for label, value in stats %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {{ label }}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ value|intcomma }}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Graphiques et statistiques financières -->
+    <div class="row">
+        <!-- Graphique des activités -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Activités du mois</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="activitesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique hebdomadaire des consultations -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Consultations de la semaine</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="hebdoConsultationsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques financières -->
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Statut des Factures</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="facturesChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Payées
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-danger"></i> Impayées
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔽 Bouton d'export global PDF -->
+    <div class="d-flex justify-content-end mt-4">
+        <a href="{% url 'dashboard:export_dashboard_pdf' %}" class="btn btn-danger">
+            <i class="fas fa-file-pdf me-1"></i> Export Global PDF
+        </a>
+    </div>
+</div>
+
+<!-- Scripts des graphiques -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Graphique des activités
+    const ctxActivites = document.getElementById('activitesChart');
+    new Chart(ctxActivites, {
+        type: 'bar',
+        data: {
+            labels: ['Consultations', 'Hospitalisations', 'Ordonnances', 'Soins'],
+            datasets: [{
+                label: 'Nombre',
+                data: [
+                    {{ chart_data.consultations }},
+                    {{ chart_data.hospitalisations }},
+                    {{ chart_data.ordonnances }},
+                    {{ chart_data.soins }}
+                ],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // Graphique des factures
+    const ctxFactures = document.getElementById('facturesChart');
+    new Chart(ctxFactures, {
+        type: 'doughnut',
+        data: {
+            labels: ['Payées', 'Impayées'],
+            datasets: [{
+                data: [{{ factures_payees }}, {{ factures_non_payees }}],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.7)',
+                    'rgba(220, 53, 69, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(220, 53, 69, 1)'
+                ],
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Graphique consultations hebdomadaires
+    const ctxHebdo = document.getElementById('hebdoConsultationsChart');
+    new Chart(ctxHebdo, {
+        type: 'line',
+        data: {
+            labels: {{ jours_labels|safe }},
+            datasets: [{
+                label: 'Consultations par jour',
+                data: {{ jours_valeurs|safe }},
+                fill: false,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                }
+            },
+            plugins: {
+                legend: { position: 'top' },
+                title: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

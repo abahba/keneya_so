@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Liste des membres administratifs</h2>
+    <a href="{% url 'administration:ajouter_membre' %}" class="btn btn-primary mb-3">+ Ajouter un membre</a>
+    <a href="{% url 'administration:export_membres_pdf' %}" class="btn btn-outline-danger">Export PDF</a>
+    <a href="{% url 'administration:export_membres_excel' %}" class="btn btn-outline-success">Export Excel</a>
+<form method="get" class="mb-3 row g-2">
+    <div class="col">
+        {{ form.nom.label_tag }} {{ form.nom }}
+    </div>
+    <div class="col">
+        {{ form.fonction.label_tag }} {{ form.fonction }}
+    </div>
+    <div class="col">
+        {{ form.actif.label_tag }} {{ form.actif }}
+    </div>
+    <div class="col">
+        <button type="submit" class="btn btn-outline-primary">Filtrer</button>
+        <a href="{% url 'administration:liste_membres' %}" class="btn btn-outline-secondary">Réinitialiser</a>
+    </div>
+</form>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Nom complet</th>
+                <th>Fonction</th>
+                <th>Téléphone</th>
+                <th>Date d'embauche</th>
+                <th>Actif</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for membre in membres %}
+            <tr>
+                <td>{{ membre.nom_complet }}</td>
+                <td>{{ membre.fonction }}</td>
+                <td>{{ membre.telephone }}</td>
+                <td>{{ membre.date_embauche }}</td>
+                <td>{{ membre.actif|yesno:"Oui,Non" }}</td>
+                <td>
+                    <a href="{% url 'administration:modifier_membre' membre.id %}" class="btn btn-sm btn-warning">Modifier</a>
+                    <a href="{% url 'administration:supprimer_membre' membre.id %}" class="btn btn-sm btn-danger">Supprimer</a>
+                    <a href="{% url 'administration:historique_membres' %}?membre={{ membre.nom_complet }}" class="btn btn-sm btn-secondary">Voir historique</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Aucun membre trouvé.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Historique des actions sur les membres</h2>
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Membre</th>
+                <th>Action</th>
+                <th>Par</th>
+                <th>Date</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in historiques %}
+            <tr>
+                <td>{{ h.membre.nom_complet }}</td>
+                <td>{{ h.action }}</td>
+                <td>{{ h.utilisateur.username }}</td>
+                <td>{{ h.date_action|date:"Y-m-d H:i" }}</td>
+                <td>{{ h.details }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

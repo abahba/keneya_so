@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>📜 Historique du passage aux urgences</h2>
+    <p><strong>Patient :</strong> {{ urgence.patient.nom_complet }}</p>
+
+    <div class="mb-3">
+        <a href="{% url 'urgences:liste_urgences' %}" class="btn btn-secondary btn-sm">⬅ Retour</a>
+        <a href="{% url 'urgences:export_historique_urgence_pdf' urgence.id %}" class="btn btn-danger btn-sm">⬇ Exporter PDF</a>
+        <a href="{% url 'urgences:export_historique_urgence_excel' urgence.id %}" class="btn btn-success btn-sm">⬇ Exporter Excel</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-3">
+            {{ form.action.label_tag }} {{ form.action }}
+        </div>
+        <div class="col-md-3">
+            {{ form.utilisateur.label_tag }} {{ form.utilisateur }}
+        </div>
+        <div class="col-md-3">
+            {{ form.date_debut.label_tag }} {{ form.date_debut }}
+        </div>
+        <div class="col-md-3">
+            {{ form.date_fin.label_tag }} {{ form.date_fin }}
+        </div>
+        <div class="col-12 mt-2">
+            <button type="submit" class="btn btn-primary btn-sm">🔍 Filtrer</button>
+            <a href="{% url 'urgences:historique_urgence' urgence.id %}" class="btn btn-secondary btn-sm">↺ Réinitialiser</a>
+        </div>
+    </form>
+
+    {% if historiques %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Utilisateur</th>
+                <th>Action</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for h in historiques %}
+            <tr>
+                <td>{{ h.date_action|date:"d/m/Y H:i" }}</td>
+                <td>{{ h.utilisateur.username }}</td>
+                <td>{{ h.get_action_display }}</td>
+                <td>{{ h.details }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">Aucune action enregistrée pour ce passage.</div>
+    {% endif %}
+</div>
+{% endblock %}

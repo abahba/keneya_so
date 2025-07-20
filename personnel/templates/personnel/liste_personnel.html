@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Liste du personnel médical</h2>
+
+  <a href="{% url 'ajouter_personnel' %}" class="btn btn-success mb-3">Ajouter</a>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nom complet</th>
+        <th>Spécialité</th>
+        <th>Rôle</th>
+        <th>Date d'embauche</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in personnels %}
+      <tr>
+        <td>{{ p.nom_complet }}</td>
+        <td>{{ p.specialite }}</td>
+        <td>{{ p.get_role_display }}</td>
+        <td>{{ p.date_embauche }}</td>
+        <td>
+          <a href="{% url 'modifier_personnel' p.id %}" class="btn btn-warning btn-sm">Modifier</a>
+          <a href="{% url 'supprimer_personnel' p.id %}" class="btn btn-danger btn-sm">Supprimer</a>
+          <a href="{% url 'historique_personnel' p.id %}" class="btn btn-info btn-sm">Historique</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">Aucun personnel trouvé.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>✏️ Modifier une urgence</h2>
+    <hr>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        <a href="{% url 'urgences:liste_urgences' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-primary">Historique du patient</h2>
+  <h4>{{ patient.nom }} {{ patient.prenom }} (Dossier : {{ patient.numero_dossier }})</h4>
+
+  <form method="get" class="row my-3">
+    <div class="col-md-4">
+      <label>Filtrer par action :</label>
+      <select name="action" class="form-control">
+        <option value="">-- Toutes --</option>
+        <option value="création" {% if request.GET.action == 'création' %}selected{% endif %}>Création</option>
+        <option value="modification" {% if request.GET.action == 'modification' %}selected{% endif %}>Modification</option>
+        <option value="suppression" {% if request.GET.action == 'suppression' %}selected{% endif %}>Suppression</option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label>Date (JJ/MM/AAAA) :</label>
+      <input type="date" name="date" class="form-control" value="{{ request.GET.date }}">
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary me-2">Filtrer</button>
+      <a href="" class="btn btn-secondary">Réinitialiser</a>
+    </div>
+  </form>
+
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'export_pdf_historique' patient.id %}" class="btn btn-outline-success me-2">📄 Export PDF</a>
+  <a href="{% url 'export_excel_historique' patient.id %}" class="btn btn-outline-info">📊 Export Excel</a>
+</div>
+
+  {% if historiques %}
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Action</th>
+          <th>Utilisateur</th>
+          <th>Détails</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in historiques %}
+        <tr>
+          <td>{{ log.date_action|date:"d/m/Y H:i" }}</td>
+          <td>{{ log.action }}</td>
+          <td>{{ log.utilisateur }}</td>
+          <td>{{ log.details }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted">Aucun historique disponible.</p>
+  {% endif %}
+</div>
+{% endblock %}
+

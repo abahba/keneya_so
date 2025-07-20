@@ -1,0 +1,17 @@
+<h1>Liste des prises en charge</h1>
+<table border="1" cellspacing="0" cellpadding="5">
+  <tr>
+    <th>Patient</th>
+    <th>Assurance</th>
+    <th>Montant</th>
+    <th>Statut</th>
+  </tr>
+  {% for p in prises %}
+  <tr>
+    <td>{{ p.patient.nom_complet }}</td>
+    <td>{{ p.assurance.nom }}</td>
+    <td>{{ p.montant_demande }}</td>
+    <td>{{ p.statut }}</td>
+  </tr>
+  {% endfor %}
+</table>

@@ -1,0 +1,17 @@
+<h2>Prises en charge</h2>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Rechercher un patient ou une assurance" value="{{ query }}">
+    <button type="submit">Rechercher</button>
+</form>
+
+<a href="{% url 'ajouter_prise_en_charge' %}">Ajouter une prise en charge</a>
+<a href="{% url 'export_prises_pdf' %}">Exporter en PDF</a> |
+<a href="{% url 'export_prises_excel' %}">Exporter en Excel</a>
+
+<ul>
+  {% for p in prises %}
+    <li>{{ p.patient.nom_complet }} - {{ p.assurance.nom }} - {{ p.montant_demande }} FCFA - {{ p.statut }}</li>
+  {% endfor %}
+</ul>
+

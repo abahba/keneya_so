@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Modifier le patient : {{ patient.nom }} {{ patient.prenom }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer les modifications</button>
+  </form>
+  <script>
+  function afficherChampsSpecifiques() {
+    const statut = document.getElementById("id_statut").value;
+    const sortieFields = ["div_id_date_sortie", "div_id_signature_sortie"];
+    const decesFields = ["div_id_date_deces", "div_id_signature_deces"];
+
+    sortieFields.forEach(id => document.getElementById(id).style.display = (statut === "sorti") ? "block" : "none");
+    decesFields.forEach(id => document.getElementById(id).style.display = (statut === "décédé") ? "block" : "none");
+  }
+
+  document.addEventListener("DOMContentLoaded", afficherChampsSpecifiques);
+  document.getElementById("id_statut").addEventListener("change", afficherChampsSpecifiques);
+</script>
+{% endblock %}

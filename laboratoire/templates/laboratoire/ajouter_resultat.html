@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>🧾 Ajouter un résultat pour : {{ analyse.type_analyse.nom }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer le résultat</button>
+</form>
+
+<p><a href="{% url 'detail_analyse' analyse.id %}">⬅️ Retour au détail</a></p>
+{% endblock %}

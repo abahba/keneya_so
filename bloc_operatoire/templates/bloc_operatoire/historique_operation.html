@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Historique de l'opération de {{ operation.patient.nom_complet }}</h3>
+    <hr>
+
+    <a href="{% url 'bloc_operatoire:liste_operations' %}" class="btn btn-sm btn-secondary mb-3">⬅ Retour</a>
+    <a href="{% url 'bloc_operatoire:export_historique_operation_pdf' operation.pk %}" class="btn btn-sm btn-danger">⬇ Exporter PDF</a>
+    <a href="{% url 'bloc_operatoire:export_historique_operation_excel' operation.pk %}" class="btn btn-sm btn-success">⬇ Exporter Excel</a>
+
+    {% if historiques %}
+    <h5>🔍 Filtrer l'historique</h5>
+    <form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">{{ form.action.label_tag }} {{ form.action }}</div>
+    <div class="col-md-3">{{ form.utilisateur.label_tag }} {{ form.utilisateur }}</div>
+    <div class="col-md-3">{{ form.date_debut.label_tag }} {{ form.date_debut }}</div>
+    <div class="col-md-3">{{ form.date_fin.label_tag }} {{ form.date_fin }}</div>
+    <div class="col-12 mt-2">
+        <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+        <a href="{% url 'bloc_operatoire:historique_operation' operation.pk %}" class="btn btn-secondary btn-sm">Réinitialiser</a>
+    </div>
+    </form>
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Action</th>
+                    <th>Utilisateur</th>
+                    <th>Détails</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for historique in historiques %}
+                    <tr>
+                        <td>{{ historique.action }}</td>
+                        <td>{{ historique.utilisateur }}</td>
+                        <td>{{ historique.details }}</td>
+                        <td>{{ historique.date_action|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            Aucun historique disponible pour cette opération.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

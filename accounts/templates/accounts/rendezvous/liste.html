@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Rendez-vous{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Liste des Rendez-vous</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            {% if rendezvous %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Patient</th>
+                            <th>Médecin</th>
+                            <th>Motif</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rdv in rendezvous %}
+                        <tr>
+                            <td>{{ rdv.date }}</td>
+                            <td>{{ rdv.patient.nom_complet }}</td>
+                            <td>{{ rdv.medecin.nom_complet }}</td>
+                            <td>{{ rdv.motif }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info">
+                    Aucun rendez-vous programmé.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

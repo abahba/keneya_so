@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Ordonnance médicale</h2>
+
+  <p><strong>Patient :</strong> {{ ordonnance.consultation.patient.nom }} {{ ordonnance.consultation.patient.prenom }}</p>
+  <p><strong>Date :</strong> {{ ordonnance.date_creation|date:"d/m/Y H:i" }}</p>
+  <p><strong>Médecin :</strong> {{ ordonnance.auteur }}</p>
+  <p><strong>Type d’assurance :</strong> {{ ordonnance.get_type_assurance_display }}</p>
+
+  <h4>Médicaments prescrits :</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Médicament</th>
+        <th>Quantité</th>
+        <th>Posologie</th>
+        <th>Durée</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ligne in ordonnance.lignes.all %}
+      <tr>
+        <td>{{ ligne.medicament.nom }}</td>
+        <td>{{ ligne.quantite }}</td>
+        <td>{{ ligne.posologie }}</td>
+        <td>{{ ligne.duree }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">Aucun médicament prescrit.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'export_ordonnance_pdf' ordonnance.id %}" class="btn btn-outline-dark">Exporter en PDF</a>
+{% if ordonnance.signature %}
+    <p><strong>Signée par :</strong> {{ ordonnance.signature.get_full_name }}</p>
+{% else %}
+    <form method="post" action="{% url 'signer_ordonnance' ordonnance.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Signer l’ordonnance</button>
+    </form>
+{% endif %}
+
+  <a href="javascript:history.back()" class="btn btn-secondary">Retour</a>
+{% endblock %}

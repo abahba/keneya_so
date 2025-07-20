@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Modifier un examen d’imagerie</h2>
+  <form method="post" enctype="multipart/form-data" class="mt-3">
+    {% csrf_token %}
+    <div class="mb-3">
+      {{ form.patient.label_tag }} {{ form.patient }}
+    </div>
+    <div class="mb-3">
+      {{ form.consultation.label_tag }} {{ form.consultation }}
+    </div>
+    <div class="mb-3">
+      {{ form.type_imagerie.label_tag }} {{ form.type_imagerie }}
+    </div>
+    <div class="mb-3">
+      {{ form.prescripteur.label_tag }} {{ form.prescripteur }}
+    </div>
+    <div class="mb-3">
+      {{ form.description.label_tag }} {{ form.description }}
+    </div>
+    <div class="mb-3">
+      {{ form.fichier_resultat.label_tag }} {{ form.fichier_resultat }}
+    </div>
+    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    <a href="{% url 'liste_examens_imagerie' %}" class="btn btn-secondary">Annuler</a>
+  </form>
+</div>
+{% endblock %}
+

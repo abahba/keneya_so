@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+        h2 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #000; padding: 5px; text-align: center; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>Liste des Factures</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Total</th>
+                <th>Assurance</th>
+                <th>À payer</th>
+                <th>Date</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in factures %}
+            <tr>
+                <td>{{ f.id }}</td>
+                <td>{{ f.patient.nom_complet }}</td>
+                <td>{{ f.montant_total }} FCFA</td>
+                <td>{{ f.montant_assurance }} FCFA</td>
+                <td>{{ f.montant_patient }} FCFA</td>
+                <td>{{ f.date_emission|date:"d/m/Y H:i" }}</td>
+                <td>{{ f.statut|title }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

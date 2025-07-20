@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Confirmer la suppression</h2>
+    
+    <div class="card mt-4">
+        <div class="card-body">
+            <p>Êtes-vous sûr de vouloir supprimer cette opération ?</p>
+            <p><strong>Patient:</strong> {{ operation.patient.nom_complet }}</p>
+            <p><strong>Type:</strong> {{ operation.type_operation }}</p>
+            <p><strong>Date:</strong> {{ operation.date_operation|date:"d/m/Y H:i" }}</p>
+            
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Confirmer la suppression
+                </button>
+                <a href="{% url 'bloc_operatoire:liste_operations' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

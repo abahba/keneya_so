@@ -1,0 +1,14 @@
+<h2>🧾 Historique de l'analyse de {{ analyse.patient.nom_complet }}</h2>
+
+<ul>
+  {% for h in historique %}
+    <li>
+      {{ h.date|date:"d/m/Y H:i" }} — {{ h.get_action_display }} par {{ h.utilisateur }}<br>
+      <em>{{ h.description }}</em>
+    </li>
+  {% empty %}
+    <li>Aucune action enregistrée.</li>
+  {% endfor %}
+</ul>
+
+<p><a href="{% url 'liste_analyses' %}">⬅ Retour</a></p>

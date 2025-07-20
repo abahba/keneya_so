@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>🩺 Liste des soins infirmiers</h2>
+
+    <div class="mb-3 d-flex justify-content-between">
+        <a href="{% url 'soins:ajouter_soin' %}" class="btn btn-primary">➕ Nouveau soin</a>
+        <div>
+            <a href="{% url 'soins:export_soins_pdf' %}" class="btn btn-danger btn-sm">⬇ Exporter PDF</a>
+            <a href="{% url 'soins:export_soins_excel' %}" class="btn btn-success btn-sm">⬇ Exporter Excel</a>
+        </div>
+    </div>
+
+    {% if soins %}
+    <table class="table table-bordered table-hover table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Patient</th>
+                <th>Type de soin</th>
+                <th>Personnel</th>
+                <th>Date</th>
+                <th>Observations</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for soin in soins %}
+            <tr>
+                <td>{{ soin.patient.nom_complet }}</td>
+                <td>{{ soin.get_type_soin_display }}</td>
+                <td>{{ soin.realise_par.nom_complet }}</td>
+                <td>{{ soin.date_soin|date:"d/m/Y H:i" }}</td>
+                <td>
+                    {% if soin.observations %}
+                        {{ soin.observations|truncatechars:50 }}
+                    {% else %}
+                        <em>Aucune</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'soins:modifier_soin' soin.id %}" class="btn btn-sm btn-warning">✏️</a>
+                    <a href="{% url 'soins:supprimer_soin' soin.id %}" class="btn btn-sm btn-danger">🗑</a>
+                    <a href="{% url 'soins:historique_soin' soin.id %}" class="btn btn-sm btn-info">📜 Historique</a>
+                    <a href="{% url 'soins:historique_soin' soin.id %}" class="btn btn-outline-info btn-sm">📜 Voir l’historique</a>
+                    <li><a href="{% url 'factures_soins' %}">💉 Factures des soins</a></li>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">Aucun soin enregistré pour le moment.</div>
+    {% endif %}
+</div>
+{% endblock %}

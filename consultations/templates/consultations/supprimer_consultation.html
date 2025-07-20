@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Supprimer la consultation</h2>
+
+<p>Êtes-vous sûr de vouloir supprimer cette consultation du {{ consultation.date }} pour le patient {{ consultation.patient.nom }} {{ consultation.patient.prenom }} ?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+    <a href="{% url 'liste_consultations' %}" class="btn btn-secondary">Annuler</a>
+</form>
+{% endblock %}

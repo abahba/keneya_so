@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Historique de l'examen - {{ examen.patient.nom }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-history me-2"></i>Historique de l'examen - 
+            <strong>{{ examen.patient.nom }}</strong> 
+            <span class="badge bg-primary">{{ examen.type_examen }}</span>
+        </h2>
+        
+        <div class="btn-group">
+            <a href="{% url 'export_historique_imagerie_pdf' examen.id %}" class="btn btn-danger btn-sm">
+                <i class="fas fa-file-pdf me-1"></i> PDF
+            </a>
+            <a href="{% url 'export_historique_imagerie_excel' examen.id %}" class="btn btn-success btn-sm">
+                <i class="fas fa-file-excel me-1"></i> Excel
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <i class="fas fa-filter me-1"></i> Filtres
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="action" class="form-label">Type d'action</label>
+                    <select name="action" id="action" class="form-select">
+                        <option value="">Toutes les actions</option>
+                        <option value="ajout" {% if action_filter == 'ajout' %}selected{% endif %}>Ajout</option>
+                        <option value="modification" {% if action_filter == 'modification' %}selected{% endif %}>Modification</option>
+                        <option value="suppression" {% if action_filter == 'suppression' %}selected{% endif %}>Suppression</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="date" class="form-label">Date spécifique</label>
+                    <input type="date" name="date" id="date" class="form-control" value="{{ date_filter }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search me-1"></i> Appliquer
+                    </button>
+                    <a href="{% url 'historique_examen_imagerie' examen.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-undo me-1"></i> Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tableau des résultats -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <i class="fas fa-list me-1"></i> Journal des modifications
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 15%">Date/Heure</th>
+                            <th style="width: 15%">Action</th>
+                            <th style="width: 20%">Utilisateur</th>
+                            <th style="width: 50%">Commentaire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for historique in historiques %}
+                            <tr>
+                                <td>{{ historique.date_action|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if historique.action == 'ajout' %}bg-success
+                                        {% elif historique.action == 'modification' %}bg-warning text-dark
+                                        {% else %}bg-danger
+                                        {% endif %}">
+                                        {{ historique.get_action_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if historique.utilisateur %}
+                                        {{ historique.utilisateur.get_full_name|default:historique.utilisateur.username }}
+                                    {% else %}
+                                        Système
+                                    {% endif %}
+                                </td>
+                                <td>{{ historique.commentaire }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4">
+                                    <i class="fas fa-info-circle fa-2x text-muted mb-2"></i>
+                                    <p class="mb-0">Aucun historique disponible pour cet examen</p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if action_filter %}&action={{ action_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">
+                        &laquo; Première
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">
+                        Précédent
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">
+                        Suivant
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if action_filter %}&action={{ action_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}">
+                        Dernière &raquo;
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

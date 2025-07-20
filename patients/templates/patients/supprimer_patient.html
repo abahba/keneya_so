@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-danger">Confirmation de suppression</h2>
+    <p>Es-tu sûr de vouloir supprimer (désactiver) le patient <strong>{{ patient.nom }} {{ patient.prenom }}</strong> ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, désactiver</button>
+        <a href="{% url 'liste_patients' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

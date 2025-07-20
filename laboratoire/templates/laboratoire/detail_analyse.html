@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>📄 Détail de l’analyse</h2>
+
+<p>
+<strong>Patient :</strong> {{ analyse.patient.nom_complet }}<br>
+<strong>Type d’analyse :</strong> {{ analyse.type_analyse.nom }}<br>
+<strong>Date :</strong> {{ analyse.date_prescription|date:"d/m/Y H:i" }}<br>
+</p>
+
+{% if resultat %}
+<h3>🧬 Résultat</h3>
+<p><strong>Valeurs :</strong> {{ resultat.valeurs }}</p>
+<p><strong>Date :</strong> {{ resultat.date_resultat|date:"d/m/Y H:i" }}</p>
+<p><strong>Commentaires :</strong> {{ resultat.commentaire }}</p>
+{% else %}
+<p><em>Aucun résultat disponible pour cette analyse.</em></p>
+{% endif %}
+
+<p><a href="{% url 'liste_analyses' %}">⬅️ Retour à la liste</a></p>
+{% endblock %}

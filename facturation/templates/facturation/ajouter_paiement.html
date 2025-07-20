@@ -1,0 +1,23 @@
+<h2>💳 Enregistrer un paiement</h2>
+
+{% if f %}
+<p><strong>Facture #{{ f.id }}</strong> – {{ f.patient.nom_complet }}<br>
+Montant total : {{ f.montant_total }} FCFA<br>
+Statut actuel : 
+<span style="color:
+    {% if f.statut == 'payée' %}green
+    {% elif f.statut == 'partiellement payée' %}orange
+    {% else %}red
+    {% endif %}
+">
+    {{ f.statut|title }}
+</span>
+</p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Valider le paiement</button>
+</form>
+

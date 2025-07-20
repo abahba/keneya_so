@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Liste des hospitalisations</h2>
+
+<a href="{% url 'ajouter_hospitalisation' %}" class="btn btn-success mb-3">Nouvelle hospitalisation</a>
+<form method="get" class="form-inline mb-3">
+    <input type="text" name="recherche" value="{{ recherche }}" class="form-control mr-2" placeholder="Rechercher...">
+    <button type="submit" class="btn btn-primary">Rechercher</button>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Service</th>
+            <th>Date entrée</th>
+            <th>Date sortie</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for hosp in hospitalisations %}
+        <tr>
+            <td>{{ hosp.patient.nom }} {{ hosp.patient.prenom }}</td>
+            <td>{{ hosp.service.nom }}</td>
+            <td>{{ hosp.date_entree|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if hosp.date_sortie %}
+                    {{ hosp.date_sortie|date:"d/m/Y H:i" }}
+                {% else %}
+                    <span class="text-danger">En cours</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'modifier_hospitalisation' hosp.id %}" class="btn btn-warning btn-sm">Modifier</a>
+                {% if not hosp.date_sortie %}
+                    <a href="{% url 'sortie_hospitalisation' hosp.id %}" class="btn btn-danger btn-sm">Marquer sortie</a>
+                {% endif %}
+                <a href="{% url 'historique_hospitalisation' hosp.id %}" class="btn btn-info btn-sm">Historique</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Aucune hospitalisation enregistrée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,7 @@
+<h2>Patients assurés</h2>
+<a href="{% url 'ajouter_patient_assure' %}">Ajouter un patient assuré</a>
+<ul>
+  {% for pa in patients_assures %}
+    <li>{{ pa.patient.nom_complet }} - {{ pa.assurance.nom }} - {{ pa.numero_carte }}</li>
+  {% endfor %}
+</ul>

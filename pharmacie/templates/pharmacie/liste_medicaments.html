@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Liste des médicaments</h2>
+
+  <a href="{% url 'ajouter_medicament' %}" class="btn btn-success mb-3">Ajouter un médicament</a>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Catégorie</th>
+        <th>Fournisseur</th>
+        <th>Quantité</th>
+        <th>Prix</th>
+        <th>Date d'expiration</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for medicament in medicaments %}
+      <tr>
+        <td>{{ medicament.nom }}</td>
+        <td>{{ medicament.categorie.nom }}</td>
+        <td>{{ medicament.fournisseur.nom }}</td>
+        <td>{{ medicament.quantite_disponible }}</td>
+        <td>{{ medicament.prix_unitaire }}</td>
+        <td>{{ medicament.date_expiration }}</td>
+        <td>
+          <a href="{% url 'modifier_medicament' medicament.id %}" class="btn btn-warning btn-sm">Modifier</a>
+          <a href="{% url 'supprimer_medicament' medicament.id %}" class="btn btn-danger btn-sm">Supprimer</a>
+          <a href="{% url 'historique_medicament' m.id %}" class="btn btn-info btn-sm">Voir historique</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7">Aucun médicament enregistré.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

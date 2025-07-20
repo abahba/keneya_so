@@ -1,0 +1,79 @@
+<h2>📄 Liste des factures</h2>
+
+<form method="get" class="mb-3">
+    <input type="text" name="search" placeholder="🔎 Rechercher facture #ID..." value="{{ request.GET.search }}" />
+    
+    <select name="statut">
+        <option value="">-- Tous les statuts --</option>
+        <option value="payée" {% if request.GET.statut == "payée" %}selected{% endif %}>✅ Payée</option>
+        <option value="partiellement payée" {% if request.GET.statut == "partiellement payée" %}selected{% endif %}>🟠 Partiellement payée</option>
+        <option value="non payée" {% if request.GET.statut == "non payée" %}selected{% endif %}>❌ Non payée</option>
+    </select>
+
+    <button type="submit">Rechercher</button>
+</form>
+
+<p>
+  <a href="{% url 'ajouter_facture' %}">➕ Nouvelle facture</a> |
+  <a href="{% url 'export_factures_pdf' %}">🧾 Export PDF</a> |
+  <a href="{% url 'export_factures_excel' %}">📊 Export Excel</a>
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Total</th>
+            <th>Assurance</th>
+            <th>À payer</th>
+            <th>Paiements</th>
+            <th>Statut</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for f in page_obj %}
+        <tr>
+            <td>{{ f.patient.nom_complet }}</td>
+            <td>{{ f.montant_total|floatformat:0 }} FCFA</td>
+            <td>{{ f.montant_assurance|floatformat:0 }} FCFA</td>
+            <td>{{ f.montant_patient|floatformat:0 }} FCFA</td>
+            <td>
+                {% for p in f.paiements.all %}
+                    {{ p.montant_verse|floatformat:0 }} FCFA - {{ p.get_mode_paiement_display }}<br>
+                {% empty %}
+                    <em>Aucun paiement</em>
+                {% endfor %}
+            </td>
+            <td>
+                <strong style="color:
+                    {% if f.statut == 'payée' %}green
+                    {% elif f.statut == 'partiellement payée' %}orange
+                    {% else %}red
+                    {% endif %}
+                ">{{ f.statut|title }}</strong>
+            </td>
+            <td>{{ f.date_emission|date:"d/m/Y H:i" }}</td>
+            <td>
+                <a href="{% url 'ajouter_paiement' %}?facture_id={{ f.id }}">💳 Payer</a> |
+                <a href="{% url 'detail_facture' f.id %}">🔍 Détail</a> |
+                <a href="{% url 'export_facture_pdf' f.id %}" target="_blank">📄 PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}&statut={{ request.GET.statut }}">«</a>
+  {% endif %}
+
+  <span>Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}&statut={{ request.GET.statut }}">»</a>
+  {% endif %}
+</div>
+

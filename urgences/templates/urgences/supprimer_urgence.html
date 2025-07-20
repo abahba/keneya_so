@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>❌ Supprimer l'urgence</h2>
+    <div class="alert alert-warning">
+        Êtes-vous sûr de vouloir supprimer cette urgence pour <strong>{{ urgence.patient.nom_complet }}</strong> ?
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a href="{% url 'urgences:liste_urgences' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}
